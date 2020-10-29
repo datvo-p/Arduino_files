@@ -1,0 +1,76 @@
+
+import processing.serial.*; // imports library for serial communication
+import java.awt.event.KeyEvent; // imports library for reading the data from the serial port
+Serial myPort; // defines Object Serial
+String data1;
+String data2;
+String data;
+
+Float distance1;
+Float Angle1;
+
+void setup() {
+  
+ size (720, 720); 
+ smooth();
+ myPort = new Serial(this,"COM3", 9600); // starts the serial communication
+ myPort.bufferUntil('\n'); // reads the data from the serial port up to the new line character "distance: number \n"
+}
+
+void Reading_data(Serial myPort)
+
+{
+  // read the data and pick out the second and last value to convert them into float for future uses. 
+  data = myPort.readStringUntil(',');
+  String[] nums = (split(data,' '));
+  data1 = nums[1];
+  data2 = nums[3];
+  
+  float distance= Float.valueOf(nums[1]);
+  float angle= Float.valueOf(nums[3]);
+  distance1 = distance;
+  Angle1 = angle;
+}
+
+void draw(){
+background(0);
+
+// simulating Radar translation/when detecting objects
+pushMatrix();
+
+if (distance1 < 40)
+  translate(width/2,710);
+  strokeWeight(10);
+  stroke(255,10,10); // red color
+  line(0,0,distance1*cos(Angle1)*0.72,distance1*sin(Angle1)*0.72); //estimating pixel to cm conversion by 0.72 scale
+if (distance1 > 40);
+  strokeWeight(10);
+  stroke(255,255,255); 
+  line(0,0,distance1*cos(Angle1)*0.72,distance1*sin(Angle1)*0.72); 
+  
+popMatrix();
+  
+// drawing grid for radar data:
+pushMatrix();
+background(0);
+translate(width/2,710);
+ strokeWeight(2);
+stroke(98,245,31);
+
+ arc(0,0,720,720,PI,TWO_PI);
+ arc(0,0,720*0.80,720*0.80,PI,TWO_PI);
+ arc(0,0,720*0.60,720*0.60,PI,TWO_PI);
+ arc(0,0,720*0.40,720*0.40,PI,TWO_PI);
+
+
+
+  line(-width/2,0,width/2,0);
+  line(0,0,(-width/2)*cos(radians(30)),(-width/2)*sin(radians(30)));
+  line(0,0,(-width/2)*cos(radians(60)),(-width/2)*sin(radians(60)));
+  line(0,0,(-width/2)*cos(radians(90)),(-width/2)*sin(radians(90)));
+  line(0,0,(-width/2)*cos(radians(120)),(-width/2)*sin(radians(120)));
+  line(0,0,(-width/2)*cos(radians(150)),(-width/2)*sin(radians(150)));
+popMatrix();
+
+
+}
